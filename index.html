@@ -1,1388 +1,1057 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Onyx Safety Engineering</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --onyx: #0a0a0a;
-    --onyx-mid: #141414;
-    --onyx-surface: #1c1c1c;
-    --onyx-border: #2a2a2a;
-    --gold: #c9972a;
-    --gold-light: #e8b84b;
-    --gold-dim: rgba(201,151,42,0.15);
-    --white: #f0ede8;
-    --muted: #888880;
-    --danger: #d94f3d;
-    --text: #ccc8c0;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--onyx);
-    color: var(--text);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 300;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    background: rgba(10,10,10,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--onyx-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2.5rem;
-    height: 68px;
-  }
-
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-decoration: none;
-  }
-
-  .nav-logo img {
-    height: 40px;
-    filter: invert(1) sepia(1) saturate(2) hue-rotate(5deg) brightness(0.9);
-  }
-
-  .nav-brand {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1.05rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--white);
-    line-height: 1.15;
-  }
-  .nav-brand span { display: block; color: var(--gold); font-size: 0.7rem; font-weight: 400; letter-spacing: 0.2em; }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    list-style: none;
-  }
-
-  .nav-links a {
-    display: block;
-    padding: 0.45rem 1rem;
-    color: var(--muted);
-    text-decoration: none;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 600;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s, border-color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--gold); border-color: var(--gold); }
-
-  .btn-login {
-    background: var(--gold);
-    color: var(--onyx) !important;
-    border-bottom: 2px solid transparent !important;
-    padding: 0.45rem 1.2rem !important;
-    font-weight: 700 !important;
-    transition: background 0.2s !important;
-  }
-  .btn-login:hover { background: var(--gold-light) !important; color: var(--onyx) !important; }
-
-  /* ── HERO ── */
-  #home {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    padding: 68px 0 0;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(201,151,42,0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,151,42,0.04) 0%, transparent 60%);
-  }
-
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(201,151,42,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(201,151,42,0.04) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
-  }
-
-  .hero-content {
-    position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 4rem 2.5rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-
-  .hero-eyebrow {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .hero-eyebrow::before {
-    content: '';
-    display: block;
-    width: 32px; height: 1px;
-    background: var(--gold);
-  }
-
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3.5rem, 6vw, 5.5rem);
-    line-height: 0.95;
-    color: var(--white);
-    letter-spacing: 0.02em;
-    margin-bottom: 1.5rem;
-  }
-  .hero-title .accent { color: var(--gold); }
-
-  .hero-desc {
-    font-size: 1.05rem;
-    color: var(--muted);
-    max-width: 440px;
-    margin-bottom: 2.5rem;
-    line-height: 1.75;
-  }
-
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-
-  .btn-primary {
-    background: var(--gold);
-    color: var(--onyx);
-    padding: 0.75rem 2rem;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    display: inline-block;
-  }
-  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--white);
-    padding: 0.75rem 2rem;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border: 1px solid var(--onyx-border);
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
-    display: inline-block;
-  }
-  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-
-  .hero-visual {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .hero-badge {
-    position: relative;
-    width: 340px; height: 340px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .badge-ring {
-    position: absolute;
-    inset: 0;
-    border: 1px solid var(--onyx-border);
-    border-radius: 50%;
-    animation: spin 30s linear infinite;
-  }
-  .badge-ring::before {
-    content: '';
-    position: absolute;
-    top: -3px; left: 50%;
-    transform: translateX(-50%);
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-  }
-
-  .badge-ring-inner {
-    position: absolute;
-    inset: 24px;
-    border: 1px dashed rgba(201,151,42,0.2);
-    border-radius: 50%;
-    animation: spin 20s linear infinite reverse;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .badge-logo {
-    filter: invert(1) sepia(1) saturate(3) hue-rotate(5deg) brightness(0.85);
-    width: 120px;
-    margin-bottom: 1rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  .badge-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold);
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ── STATS BAR ── */
-  .stats-bar {
-    background: var(--onyx-surface);
-    border-top: 1px solid var(--onyx-border);
-    border-bottom: 1px solid var(--onyx-border);
-  }
-
-  .stats-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2.5rem;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .stat-item {
-    padding: 2rem 1.5rem;
-    border-right: 1px solid var(--onyx-border);
-    text-align: center;
-  }
-  .stat-item:last-child { border-right: none; }
-
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.8rem;
-    color: var(--gold);
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-
-  .stat-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  /* ── SECTIONS ── */
-  section {
-    padding: 6rem 0;
-    scroll-margin-top: 68px;
-  }
-
-  .section-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2.5rem;
-  }
-
-  .section-header {
-    margin-bottom: 3.5rem;
-  }
-
-  .section-eyebrow {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-  .section-eyebrow::after {
-    content: '';
-    flex: 1;
-    max-width: 60px;
-    height: 1px;
-    background: var(--gold);
-  }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    color: var(--white);
-    letter-spacing: 0.02em;
-    line-height: 1;
-  }
-
-  .section-subtitle {
-    margin-top: 0.75rem;
-    color: var(--muted);
-    max-width: 520px;
-    font-size: 1rem;
-  }
-
-  /* ── ABOUT ── */
-  #about { background: var(--onyx-mid); }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: start;
-  }
-
-  .about-body p {
-    color: var(--text);
-    margin-bottom: 1.25rem;
-    font-size: 1rem;
-    line-height: 1.8;
-  }
-
-  .about-values {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .value-card {
-    background: var(--onyx-surface);
-    border: 1px solid var(--onyx-border);
-    border-top: 3px solid var(--gold);
-    padding: 1.5rem;
-    transition: border-color 0.2s;
-  }
-  .value-card:hover { border-color: var(--gold); }
-
-  .value-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .value-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--white);
-    margin-bottom: 0.4rem;
-  }
-
-  .value-desc {
-    font-size: 0.85rem;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  .team-placeholder {
-    background: var(--onyx-surface);
-    border: 1px solid var(--onyx-border);
-    padding: 3rem 2rem;
-    text-align: center;
-  }
-
-  .placeholder-img {
-    width: 100%;
-    aspect-ratio: 4/3;
-    background: var(--onyx-border);
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--muted);
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-family: 'Barlow Condensed', sans-serif;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .placeholder-img::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 20px,
-      rgba(201,151,42,0.03) 20px,
-      rgba(201,151,42,0.03) 21px
-    );
-  }
-
-  /* ── TRAINING ── */
-  #training { background: var(--onyx); }
-
-  .courses-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  .course-card {
-    background: var(--onyx-surface);
-    border: 1px solid var(--onyx-border);
-    overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s;
-    cursor: pointer;
-  }
-  .course-card:hover { transform: translateY(-4px); border-color: var(--gold); }
-
-  .course-thumb {
-    aspect-ratio: 16/9;
-    background: var(--onyx-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .course-thumb::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 12px,
-      rgba(201,151,42,0.03) 12px,
-      rgba(201,151,42,0.03) 13px
-    );
-  }
-
-  .course-level {
-    position: absolute;
-    top: 0.75rem; left: 0.75rem;
-    background: var(--gold);
-    color: var(--onyx);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 0.2rem 0.6rem;
-    z-index: 1;
-  }
-
-  .course-body { padding: 1.5rem; }
-
-  .course-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
-    letter-spacing: 0.03em;
-  }
-
-  .course-desc {
-    font-size: 0.85rem;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 1.25rem;
-  }
-
-  .course-meta {
-    display: flex;
-    gap: 1rem;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-top: 1px solid var(--onyx-border);
-    padding-top: 1rem;
-  }
-
-  .course-meta span { display: flex; align-items: center; gap: 0.35rem; }
-
-  /* ── CYBER ── */
-  #cyber { background: var(--onyx-mid); }
-
-  .cyber-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-
-  .services-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    background: var(--onyx-border);
-  }
-
-  .service-item {
-    background: var(--onyx-surface);
-    padding: 1.5rem 1.75rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1.25rem;
-    cursor: pointer;
-    transition: background 0.15s;
-    border-left: 3px solid transparent;
-  }
-  .service-item:hover, .service-item.active {
-    background: var(--onyx);
-    border-left-color: var(--gold);
-  }
-
-  .service-icon {
-    width: 38px; height: 38px;
-    background: var(--gold-dim);
-    border: 1px solid rgba(201,151,42,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .service-name {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
-    color: var(--white);
-    margin-bottom: 0.25rem;
-  }
-
-  .service-brief {
-    font-size: 0.85rem;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-
-  .cyber-feature {
-    background: var(--onyx-surface);
-    border: 1px solid var(--onyx-border);
-    padding: 2.5rem;
-    position: sticky;
-    top: 88px;
-  }
-
-  .feature-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--gold-dim);
-    border: 1px solid rgba(201,151,42,0.3);
-    padding: 0.4rem 0.9rem;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1.5rem;
-  }
-
-  .feature-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    color: var(--white);
-    line-height: 1.05;
-    margin-bottom: 1rem;
-  }
-
-  .feature-text {
-    font-size: 0.9rem;
-    color: var(--muted);
-    line-height: 1.75;
-    margin-bottom: 1.5rem;
-  }
-
-  .threat-meter {
-    margin-top: 2rem;
-  }
-
-  .meter-label {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
-  }
-
-  .meter-bar {
-    height: 4px;
-    background: var(--onyx-border);
-    margin-bottom: 0.85rem;
-    overflow: hidden;
-  }
-
-  .meter-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold-light));
-    transition: width 0.8s ease;
-  }
-
-  /* ── LOGIN ── */
-  #login {
-    background: var(--onyx);
-    min-height: 60vh;
-  }
-
-  .login-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-  }
-
-  .login-panel {
-    background: var(--onyx-surface);
-    border: 1px solid var(--onyx-border);
-    border-top: 3px solid var(--gold);
-    padding: 3rem 2.5rem;
-  }
-
-  .login-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    color: var(--white);
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.03em;
-  }
-
-  .login-sub {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-bottom: 2rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.25rem;
-  }
-
-  .form-label {
-    display: block;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-  }
-
-  .form-input {
-    width: 100%;
-    background: var(--onyx);
-    border: 1px solid var(--onyx-border);
-    color: var(--white);
-    padding: 0.85rem 1rem;
-    font-family: 'Barlow', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-input:focus { border-color: var(--gold); }
-  .form-input::placeholder { color: #444; }
-
-  .form-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
-
-  .form-check {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.82rem;
-    color: var(--muted);
-    cursor: pointer;
-  }
-
-  .form-check input { accent-color: var(--gold); }
-
-  .form-link {
-    font-size: 0.82rem;
-    color: var(--gold);
-    text-decoration: none;
-  }
-  .form-link:hover { text-decoration: underline; }
-
-  .btn-submit {
-    width: 100%;
-    background: var(--gold);
-    color: var(--onyx);
-    border: none;
-    padding: 0.9rem;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .btn-submit:hover { background: var(--gold-light); }
-
-  .login-divider {
-    text-align: center;
-    margin: 1.25rem 0;
-    font-size: 0.78rem;
-    color: var(--onyx-border);
-    position: relative;
-  }
-  .login-divider::before, .login-divider::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 42%;
-    height: 1px;
-    background: var(--onyx-border);
-  }
-  .login-divider::before { left: 0; }
-  .login-divider::after { right: 0; }
-
-  .login-register {
-    text-align: center;
-    font-size: 0.83rem;
-    color: var(--muted);
-    margin-top: 1.25rem;
-  }
-  .login-register a { color: var(--gold); text-decoration: none; }
-
-  .login-info { padding: 1rem 0; }
-
-  .info-item {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    align-items: flex-start;
-  }
-
-  .info-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    color: var(--onyx-border);
-    line-height: 1;
-    flex-shrink: 0;
-    width: 2.5rem;
-  }
-
-  .info-text-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
-    color: var(--white);
-    margin-bottom: 0.25rem;
-  }
-
-  .info-text-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--onyx-surface);
-    border-top: 1px solid var(--onyx-border);
-    padding: 3rem 0 2rem;
-  }
-
-  .footer-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2.5rem;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 3rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .footer-brand img {
-    height: 36px;
-    filter: invert(1) sepia(1) saturate(2) hue-rotate(5deg) brightness(0.85);
-    margin-bottom: 0.75rem;
-  }
-
-  .footer-tagline { font-size: 0.85rem; color: var(--muted); line-height: 1.7; max-width: 240px; }
-
-  .footer-col-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 0.78rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--white);
-    margin-bottom: 1rem;
-  }
-
-  .footer-links { list-style: none; }
-  .footer-links li { margin-bottom: 0.5rem; }
-  .footer-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-  }
-  .footer-links a:hover { color: var(--gold); }
-
-  .footer-bottom {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.5rem 2.5rem 0;
-    border-top: 1px solid var(--onyx-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-
-  .footer-bottom a { color: var(--muted); text-decoration: none; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .hero-content { grid-template-columns: 1fr; }
-    .hero-visual { display: none; }
-    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-    .courses-grid { grid-template-columns: 1fr 1fr; }
-    .cyber-layout { grid-template-columns: 1fr; }
-    .login-layout { grid-template-columns: 1fr; }
-    .stats-inner { grid-template-columns: 1fr 1fr; }
-    .stat-item:nth-child(2) { border-right: none; }
-    .footer-inner { grid-template-columns: 1fr 1fr; }
-  }
-
-  @media (max-width: 600px) {
-    .courses-grid { grid-template-columns: 1fr; }
-    nav { padding: 0 1.25rem; }
-    .nav-links { display: none; }
-    .section-inner { padding: 0 1.25rem; }
-  }
-
-  /* ── ENTRANCE ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .hero-eyebrow { animation: fadeUp 0.6s ease 0.1s both; }
-  .hero-title   { animation: fadeUp 0.6s ease 0.25s both; }
-  .hero-desc    { animation: fadeUp 0.6s ease 0.4s both; }
-  .hero-actions { animation: fadeUp 0.6s ease 0.55s both; }
-  .hero-visual  { animation: fadeUp 0.8s ease 0.4s both; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onyx Safety Engineering – Safety &amp; OT Cybersecurity</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0f1f3d;
+      --navy-mid:   #162847;
+      --navy-light: #1e3a5f;
+      --white:      #ffffff;
+      --cloud:      #f8f9fb;
+      --stone:      #f0f2f5;
+      --border:     #e2e5eb;
+      --border-mid: #ced3dd;
+      --ink:        #1a2236;
+      --ink-mid:    #374257;
+      --ink-light:  #5e6b82;
+      --amber:      #b8740a;
+      --amber-light:#d4890f;
+      --amber-bg:   #fef7ec;
+      --amber-bdr:  #ecd080;
+      --steel:      #2e6da4;
+      --steel-light:#4a8cc4;
+      --steel-bg:   #eef4fb;
+      --display:    'DM Serif Display', Georgia, serif;
+      --body:       'Instrument Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--body);
+      background: var(--white);
+      color: var(--ink);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* Ensure nothing ever renders as italic */
+    em, i, cite, dfn, address { font-style: normal; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%;
+      height: 72px;
+      transition: height 0.3s, box-shadow 0.3s;
+    }
+    nav.scrolled { height: 62px; box-shadow: 0 2px 20px rgba(15,31,61,0.09); }
+    .nav-logo img { height: 34px; display: block; }
+    .nav-links { display: flex; gap: 34px; list-style: none; }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 500; letter-spacing: 0.01em;
+      color: var(--ink-mid); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--navy); }
+    .nav-cta {
+      background: var(--navy); color: var(--white);
+      font-weight: 600; font-size: 0.875rem;
+      padding: 10px 24px; border: none; cursor: pointer;
+      text-decoration: none; transition: background 0.2s, transform 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .nav-cta:hover { background: var(--navy-light); transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      background: var(--cloud);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      flex: 1;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* Left panel — light content */
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 100px 6% 60px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Right panel — navy graphic */
+    .hero-right {
+      background: linear-gradient(150deg, var(--navy) 0%, var(--navy-light) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-right-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .hero-right-glow {
+      position: absolute; top: -20%; right: -20%;
+      width: 80%; height: 80%;
+      background: radial-gradient(ellipse, rgba(200,134,10,0.18) 0%, transparent 65%);
+    }
+    .hero-right-text {
+      position: absolute; bottom: 60px; left: 48px; right: 48px;
+    }
+    .hero-stat-row {
+      display: flex; gap: 40px; flex-wrap: wrap;
+    }
+    .hero-stat {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .hero-stat-num {
+      font-family: var(--display);
+      font-size: 2.4rem; font-weight: 400;
+      color: var(--white); line-height: 1;
+    }
+    .hero-stat-num sup { font-family: var(--body); font-size: 1rem; color: var(--amber-light); }
+    .hero-stat-label {
+      font-size: 0.78rem; font-weight: 500;
+      color: rgba(255,255,255,0.5); letter-spacing: 0.03em;
+    }
+    .hero-right-divider {
+      width: 40px; height: 2px; background: var(--amber-light);
+      margin-bottom: 32px;
+    }
+    .hero-right-tagline {
+      font-family: var(--display);
+      font-size: 1.45rem; font-weight: 400;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.5; margin-bottom: 40px;
+      max-width: 320px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--amber);
+      margin-bottom: 28px;
+      animation: fadeUp 0.7s ease both;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 28px; height: 2px; background: var(--amber);
+    }
+
+    h1 {
+      font-family: var(--display);
+      font-size: clamp(2.4rem, 3.8vw, 3.6rem);
+      font-weight: 400;
+      line-height: 1.18;
+      color: var(--navy);
+      margin-bottom: 24px;
+      letter-spacing: 0;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    h1 .accent { color: var(--steel); font-style: normal; }
+
+    .hero-sub {
+      font-size: 1rem; font-weight: 400; color: var(--ink-light);
+      max-width: 460px; line-height: 1.82; margin-bottom: 44px;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-ctas {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--navy); color: var(--white);
+      font-weight: 600; font-size: 0.9rem; padding: 13px 28px;
+      border: 2px solid var(--navy); cursor: pointer;
+      text-decoration: none; display: inline-block; transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--navy-light); border-color: var(--navy-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,31,61,0.22); }
+
+    .btn-outline {
+      background: transparent; color: var(--navy);
+      font-weight: 600; font-size: 0.9rem; padding: 13px 28px;
+      border: 2px solid var(--navy); cursor: pointer;
+      text-decoration: none; display: inline-block; transition: all 0.2s;
+    }
+    .btn-outline:hover { background: var(--navy); color: var(--white); }
+
+    /* Trust bar */
+    .trust-bar {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 16px 6%;
+    }
+    .trust-bar-inner {
+      max-width: 1160px; margin: 0 auto;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .trust-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--ink-light);
+      margin-right: 8px; white-space: nowrap;
+    }
+    .trust-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .trust-tag {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
+      color: var(--ink-mid); background: var(--stone);
+      border: 1px solid var(--border); padding: 4px 11px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 100px 6%; }
+    .section-inner { max-width: 1160px; margin: 0 auto; }
+
+    .eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--steel);
+      margin-bottom: 16px;
+    }
+    .eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--amber); flex-shrink: 0; }
+
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(2rem, 3.2vw, 2.75rem);
+      font-weight: 400;
+      line-height: 1.22;
+      color: var(--navy);
+      margin-bottom: 18px;
+      letter-spacing: 0;
+    }
+    h2 .accent { color: var(--steel); font-style: normal; }
+
+    h3 {
+      font-family: var(--display);
+      font-style: normal;
+    }
+
+    .lead {
+      font-size: 1rem; color: var(--ink-light);
+      max-width: 580px; line-height: 1.82;
+    }
+
+    /* ── CREDIBILITY ── */
+    #credibility { background: var(--white); }
+
+    .cred-layout {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 60px; align-items: start;
+    }
+
+    .cred-text p {
+      font-size: 0.975rem; color: var(--ink-mid);
+      line-height: 1.85; margin-bottom: 18px;
+    }
+
+    .cred-quote {
+      margin-top: 32px; padding: 24px 28px;
+      border-left: 3px solid var(--amber);
+      background: var(--amber-bg);
+    }
+    .cred-quote p {
+      font-family: var(--display);
+      font-size: 1.1rem; font-weight: 400;
+      color: var(--navy); line-height: 1.65;
+      margin: 0; font-style: normal;
+    }
+
+    .metrics-wrap {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border);
+    }
+    .metric-cell {
+      background: var(--white); padding: 36px 28px;
+      transition: background 0.2s;
+    }
+    .metric-cell:hover { background: var(--cloud); }
+    .metric-num {
+      font-family: var(--display);
+      font-size: 3rem; font-weight: 400;
+      color: var(--navy); line-height: 1; margin-bottom: 8px;
+    }
+    .metric-num sup { font-size: 1.3rem; color: var(--amber); font-family: var(--body); }
+    .metric-desc {
+      font-size: 0.875rem; color: var(--ink-light); font-weight: 500; line-height: 1.45;
+    }
+
+    /* ── SERVICES ── */
+    #services { background: var(--cloud); }
+
+    .services-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border-mid); margin-top: 56px;
+    }
+
+    .svc-card {
+      background: var(--white); padding: 40px 30px;
+      display: flex; flex-direction: column;
+      transition: background 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .svc-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; background: var(--amber);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .svc-card:hover { background: var(--navy); }
+    .svc-card:hover::after { transform: scaleX(1); }
+    .svc-card:hover .svc-num { color: rgba(255,255,255,0.1); }
+    .svc-card:hover .svc-icon-wrap { border-color: rgba(200,134,10,0.4); background: rgba(200,134,10,0.1); color: var(--amber-light); }
+    .svc-card:hover h3 { color: var(--white); }
+    .svc-card:hover p { color: rgba(255,255,255,0.6); }
+    .svc-card:hover .svc-link { color: var(--amber-light); }
+
+    .svc-num {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      color: var(--border-mid); margin-bottom: 20px; transition: color 0.25s;
+      font-family: var(--body);
+    }
+    .svc-icon-wrap {
+      width: 48px; height: 48px;
+      border: 1.5px solid var(--border); background: var(--cloud);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--steel); margin-bottom: 22px;
+      transition: all 0.25s;
+    }
+    .svc-icon-wrap svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+
+    .svc-card h3 {
+      font-family: var(--display);
+      font-size: 1.1rem; font-weight: 400; font-style: normal;
+      color: var(--navy); margin-bottom: 14px;
+      line-height: 1.35; transition: color 0.25s;
+    }
+    .svc-card p {
+      font-size: 0.875rem; color: var(--ink-light);
+      line-height: 1.78; margin-bottom: 28px; flex: 1;
+      transition: color 0.25s;
+    }
+    .svc-link {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--steel); text-decoration: none; text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: color 0.25s; font-family: var(--body);
+    }
+    .svc-link::after { content: '→'; transition: transform 0.2s; }
+
+    /* ── DIFFERENTIATOR ── */
+    #differentiator { background: var(--white); }
+
+    .diff-layout {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-top: 60px; align-items: start;
+    }
+
+    .diff-text p {
+      font-size: 0.975rem; color: var(--ink-mid);
+      line-height: 1.85; margin-bottom: 18px;
+    }
+
+    .check-list { list-style: none; margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+    .check-list li {
+      display: flex; align-items: flex-start; gap: 14px;
+      font-size: 0.95rem; color: var(--ink-mid); line-height: 1.5;
+    }
+    .check-list li::before {
+      content: '';
+      flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px;
+      background: var(--amber-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23b8740a' stroke-width='2.2'%3E%3Cpolyline points='3 8 6.5 11.5 13 5'/%3E%3C/svg%3E") no-repeat center/11px;
+      border: 1px solid var(--amber-bdr);
+    }
+
+    .diff-right { display: flex; flex-direction: column; gap: 20px; }
+
+    .capability-card {
+      padding: 24px 26px;
+      border: 1px solid var(--border);
+      background: var(--cloud);
+    }
+    .cap-label {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--steel); margin-bottom: 12px;
+      display: flex; justify-content: space-between;
+      font-family: var(--body);
+    }
+    .cap-label span { color: var(--ink-light); font-weight: 500; letter-spacing: 0; text-transform: none; }
+    .cap-track {
+      height: 4px; background: var(--border); overflow: hidden;
+    }
+    .cap-fill {
+      height: 100%; background: linear-gradient(90deg, var(--navy), var(--steel-light));
+      transform-origin: left; transform: scaleX(0);
+      animation: barGrow 1.3s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    .cap-fill.amber { background: linear-gradient(90deg, var(--amber), var(--amber-light)); }
+    @keyframes barGrow { to { transform: scaleX(1); } }
+
+    .standards-panel {
+      padding: 26px 28px; background: var(--navy);
+    }
+    .standards-panel-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.13em;
+      text-transform: uppercase; color: var(--amber-light); margin-bottom: 14px;
+      font-family: var(--body);
+    }
+    .stds { display: flex; flex-wrap: wrap; gap: 8px; }
+    .std {
+      font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      padding: 5px 12px; font-family: var(--body);
+    }
+
+    /* ── INDUSTRIES ── */
+    #industries { background: var(--cloud); }
+
+    .industries-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border-mid); margin-top: 56px;
+    }
+
+    .ind-card {
+      background: var(--white); padding: 38px 30px;
+      text-decoration: none; display: block;
+      transition: background 0.25s; position: relative; overflow: hidden;
+    }
+    .ind-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--amber);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .ind-card:hover { background: var(--navy); }
+    .ind-card:hover::before { transform: scaleX(1); }
+    .ind-card:hover .ind-num { color: rgba(255,255,255,0.08); }
+    .ind-card:hover h3 { color: var(--white); }
+    .ind-card:hover p { color: rgba(255,255,255,0.55); }
+    .ind-card:hover .ind-arrow { opacity: 1; color: var(--amber-light); }
+
+    .ind-num {
+      font-family: var(--display);
+      font-size: 2.8rem; font-weight: 400;
+      color: var(--stone); line-height: 1; margin-bottom: 16px;
+      transition: color 0.25s;
+    }
+    .ind-card h3 {
+      font-family: var(--display);
+      font-size: 1.05rem; font-weight: 400; font-style: normal;
+      color: var(--navy); margin-bottom: 10px; transition: color 0.25s;
+    }
+    .ind-card p {
+      font-size: 0.875rem; color: var(--ink-light);
+      line-height: 1.72; transition: color 0.25s;
+    }
+    .ind-arrow {
+      position: absolute; top: 30px; right: 28px;
+      font-size: 1rem; color: var(--border-mid); opacity: 0;
+      transition: all 0.25s;
+    }
+
+    /* ── INSIGHTS ── */
+    #insights { background: var(--white); }
+
+    .insights-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; flex-wrap: wrap; gap: 24px;
+    }
+
+    .insights-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1px; background: var(--border); margin-top: 56px;
+    }
+
+    .insight-card {
+      background: var(--white); padding: 40px 38px;
+      text-decoration: none; display: block; transition: background 0.2s;
+    }
+    .insight-card:hover { background: var(--cloud); }
+
+    .ins-tag {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--steel);
+      background: var(--steel-bg); border: 1px solid rgba(46,109,164,0.2);
+      padding: 4px 10px; display: inline-block; margin-bottom: 20px;
+      font-family: var(--body);
+    }
+
+    .insight-card h3 {
+      font-family: var(--display);
+      font-size: 1.15rem; font-weight: 400; font-style: normal;
+      color: var(--navy); margin-bottom: 14px; line-height: 1.4;
+    }
+    .insight-card p {
+      font-size: 0.9rem; color: var(--ink-light);
+      line-height: 1.78; margin-bottom: 24px;
+    }
+    .ins-read {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--steel);
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--body);
+    }
+    .ins-read::after { content: '→'; }
+
+    /* ── PORTAL ── */
+    #portal { background: var(--cloud); }
+
+    .portal-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border-mid); margin-top: 56px;
+    }
+
+    .portal-card {
+      background: var(--white); padding: 36px 28px;
+      transition: background 0.2s;
+    }
+    .portal-card:hover { background: var(--cloud); }
+
+    .portal-icon {
+      width: 46px; height: 46px;
+      background: var(--navy); color: var(--amber-light);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .portal-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+    .portal-card h3 {
+      font-family: var(--display);
+      font-size: 1rem; font-weight: 400; font-style: normal;
+      color: var(--navy); margin-bottom: 10px;
+    }
+    .portal-card p {
+      font-size: 0.875rem; color: var(--ink-light); line-height: 1.72;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      background: var(--navy);
+      position: relative; overflow: hidden;
+    }
+    .cta-geo {
+      position: absolute; top: -40%; right: -10%;
+      width: 60%; height: 200%;
+      background: radial-gradient(ellipse, rgba(200,134,10,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    #cta .section-inner { position: relative; z-index: 2; text-align: center; }
+    #cta h2 { color: var(--white); }
+    #cta h2 .accent { color: var(--amber-light); }
+    #cta .lead { color: rgba(255,255,255,0.62); margin: 16px auto 44px; text-align: center; }
+    #cta .eyebrow { justify-content: center; color: var(--amber-light); }
+    #cta .eyebrow::before { background: var(--amber-light); }
+
+    .btn-amber {
+      background: var(--amber); color: var(--white);
+      font-weight: 700; font-size: 0.95rem; padding: 14px 38px;
+      border: none; cursor: pointer; text-decoration: none;
+      display: inline-block; transition: all 0.2s;
+    }
+    .btn-amber:hover { background: var(--amber-light); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(184,116,10,0.4); }
+
+    .cta-trust {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 32px;
+      margin-top: 48px;
+    }
+    .cta-trust-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.875rem; color: rgba(255,255,255,0.5);
+    }
+    .cta-trust-item::before {
+      content: '';
+      width: 16px; height: 16px; flex-shrink: 0;
+      background: rgba(200,134,10,0.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23d4890f' stroke-width='2.2'%3E%3Cpolyline points='3 8 6.5 11.5 13 5'/%3E%3C/svg%3E") no-repeat center/10px;
+      border: 1px solid rgba(200,134,10,0.3);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 64px 6% 32px;
+    }
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 56px; margin-bottom: 56px;
+    }
+    .footer-brand img { height: 30px; display: block; margin-bottom: 18px; filter: brightness(10); }
+    .footer-brand p {
+      font-size: 0.875rem; color: rgba(255,255,255,0.42);
+      line-height: 1.78; max-width: 240px;
+    }
+    .footer-col h4 {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.13em;
+      text-transform: uppercase; color: rgba(255,255,255,0.88);
+      margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a {
+      font-size: 0.875rem; color: rgba(255,255,255,0.42);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: rgba(255,255,255,0.9); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 14px;
+    }
+    .footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.28); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a {
+      font-size: 0.8rem; color: rgba(255,255,255,0.28);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-legal a:hover { color: rgba(255,255,255,0.7); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .portal-grid   { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid   { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-body { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 100px 6% 60px; background: var(--navy); }
+      h1 { color: var(--white); font-size: 2.4rem; }
+      .hero-sub { color: rgba(255,255,255,0.65); }
+      .btn-outline { border-color: rgba(255,255,255,0.4); color: var(--white); }
+      .cred-layout, .diff-layout { grid-template-columns: 1fr; gap: 40px; }
+      .industries-grid { grid-template-columns: repeat(2, 1fr); }
+      .insights-grid { grid-template-columns: 1fr; }
+      .services-grid, .portal-grid { grid-template-columns: 1fr; }
+      .metrics-wrap { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      section { padding: 72px 6%; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
-<nav>
-  <a href="#home" class="nav-logo">
-    <img src="c:\Users\SteveDrever-Marshall\OneDrive - Onyx Safety Engineering Limited\Documents\Onyx Safety Engineering\Web Pages\Lesson 1\alogoonyx.png" alt="Onyx Safety Engineering">
-    <div class="nav-brand">
-      Onyx Safety<span>Engineering</span>
-    </div>
-  </a>
+<nav id="mainnav">
+  <div class="nav-logo">
+    <img src="data:image/jpeg;base64,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" alt="Onyx Safety Engineering" />
+  </div>
   <ul class="nav-links">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#training">Training</a></li>
-    <li><a href="#cyber">Cyber Security</a></li>
-    <li><a href="#login" class="btn-login">Client Login</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#industries">Industries</a></li>
+    <li><a href="#insights">Insights</a></li>
+    <li><a href="#portal">Client Portal</a></li>
+    <li><a href="#cta">Contact</a></li>
   </ul>
+  <a href=" https://calendly.com/steve-onyxsafetyengineering" class="nav-cta">Book a Consultation</a>
 </nav>
 
-<!-- ── HERO ── -->
-<section id="home">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div>
-      <p class="hero-eyebrow">PROCESSS SAFETY · TRANING · CYBER SECURITY</p>
-      <h1 class="hero-title">Safety<br>That <span class="accent">Protects.</span><br>Training<br>That Works.</h1>
-      <p class="hero-desc">Onyx Safety Engineering delivers expert process safety consultancy, professional training programmes, and robust cyber security solutions for industries that can't afford to fail.</p>
-      <div class="hero-actions">
-        <a href="#training" class="btn-primary">View Courses</a>
-        <a href="#about" class="btn-outline">Our Approach</a>
+<!-- HERO -->
+<section id="hero" style="padding:0;">
+  <div class="hero-body">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Independent Consultancy</p>
+      <h1>Safety Engineering &amp;<br><span class="accent">OT Cybersecurity</span><br>for Critical Infrastructure</h1>
+      <p class="hero-sub">Independent expertise in functional safety, industrial cybersecurity, and regulatory compliance for complex and high-hazard systems.</p>
+      <div class="hero-ctas">
+        <a href=" https://calendly.com/steve-onyxsafetyengineering" class="btn-primary">Speak to a Consultant</a>
+        <a href=" https://calendly.com/steve-onyxsafetyengineering" class="btn-outline">Book a Security Assessment</a>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="hero-badge">
-        <div class="badge-ring"></div>
-        <div class="badge-ring-inner"></div>
-        <img class="badge-logo" src="c:\Users\SteveDrever-Marshall\OneDrive - Onyx Safety Engineering Limited\Documents\Onyx Safety Engineering\Web Pages\Lesson 1\alogoonyx.png" alt="Onyx Safety Engineering">
-        <p class="badge-label">Safety · Training · Security</p>
+    <div class="hero-right">
+      <div class="hero-right-grid"></div>
+      <div class="hero-right-glow"></div>
+      <div class="hero-right-text">
+        <div class="hero-right-divider"></div>
+        <p class="hero-right-tagline">Engineering-led. Independently delivered. Built for environments where failure is not an option.</p>
+        <div class="hero-stat-row">
+          <div class="hero-stat">
+            <span class="hero-stat-num">25<sup>+</sup></span>
+            <span class="hero-stat-label">Years Experience</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">100<sup>+</sup></span>
+            <span class="hero-stat-label">Assessments Delivered</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">3</span>
+            <span class="hero-stat-label">Global Regions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="trust-bar">
+    <div class="trust-bar-inner">
+      <span class="trust-label">Aligned to</span>
+      <div class="trust-tags">
+        <span class="trust-tag">IEC 61508</span>
+        <span class="trust-tag">IEC 61511</span>
+        <span class="trust-tag">IEC 62443</span>
+        <span class="trust-tag">ISO 27001</span>
+        <span class="trust-tag">Critical Infrastructure</span>
+        <span class="trust-tag">Energy</span>
+        <span class="trust-tag">Manufacturing</span>
+        <span class="trust-tag">Defence</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── STATS ── -->
-<div class="stats-bar">
-  <div class="stats-inner">
-    <div class="stat-item">
-      <div class="stat-num">500+</div>
-      <div class="stat-label">Clients Served</div>
+<!-- CREDIBILITY -->
+<section id="credibility">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="eyebrow">Our Track Record</p>
+      <h2>Trusted by organisations<br>operating <span class="accent">critical systems</span></h2>
     </div>
-    <div class="stat-item">
-      <div class="stat-num">98%</div>
-      <div class="stat-label">Pass Rate</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">15+</div>
-      <div class="stat-label">Years Experience</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">40+</div>
-      <div class="stat-label">Accredited Courses</div>
+    <div class="cred-layout">
+      <div class="reveal reveal-d1">
+        <div class="cred-text">
+          <p>Our consultants support organisations responsible for industrial operations, safety-critical infrastructure, and regulated environments.</p>
+          <p>We combine safety engineering expertise with advanced cybersecurity knowledge to ensure systems remain safe, secure, and compliant — from initial design through to operational lifecycle management.</p>
+          <p>With deep sector experience across energy, manufacturing, oil &amp; gas, and defence, we deliver independent, engineering-led insight that organisations trust when it matters most.</p>
+        </div>
+        <div class="cred-quote">
+          <p>Engineering-led. Independently delivered. Built for environments where failure is not an option.</p>
+        </div>
+      </div>
+      <div class="metrics-wrap reveal reveal-d2">
+        <div class="metric-cell">
+          <div class="metric-num">25<sup>+</sup></div>
+          <div class="metric-desc">Years combined engineering experience</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-num">100<sup>+</sup></div>
+          <div class="metric-desc">Safety and cybersecurity assessments delivered</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-num">3</div>
+          <div class="metric-desc">Regions — UK, Europe &amp; Middle East</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-num">4</div>
+          <div class="metric-desc">Core sectors: Energy, Manufacturing, Defence &amp; CNI</div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ── ABOUT ── -->
-<section id="about">
+<!-- SERVICES -->
+<section id="services">
   <div class="section-inner">
-    <div class="section-header">
-      <p class="section-eyebrow">Who We Are</p>
-      <h2 class="section-title">Engineering<br>A Safer Future</h2>
-      <p class="section-subtitle">Trusted by organisations across the UK to manage risk, develop people, and protect critical infrastructure.</p>
+    <div class="reveal">
+      <p class="eyebrow">What We Do</p>
+      <h2>Core <span class="accent">Services</span></h2>
+      <p class="lead">End-to-end capability across functional safety and industrial cybersecurity — delivered by engineers who understand both disciplines.</p>
     </div>
-    <div class="about-grid">
+    <div class="services-grid reveal">
+      <div class="svc-card">
+        <div class="svc-num">01</div>
+        <div class="svc-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <h3>Functional Safety Engineering</h3>
+        <p>Lifecycle support for Safety Instrumented Systems and safety-critical control systems, from SIL determination through verification and validation.</p>
+        <a href="#" class="svc-link">Learn More</a>
+      </div>
+      <div class="svc-card">
+        <div class="svc-num">02</div>
+        <div class="svc-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>OT Cybersecurity</h3>
+        <p>Industrial cybersecurity assessments and architecture reviews aligned with IEC 62443, protecting operational technology environments from emerging threats.</p>
+        <a href="#" class="svc-link">Learn More</a>
+      </div>
+      <div class="svc-card">
+        <div class="svc-num">03</div>
+        <div class="svc-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Cyber Risk &amp; Compliance</h3>
+        <p>Risk assessments and regulatory compliance programmes for critical infrastructure, delivering structured remediation and audit-ready documentation.</p>
+        <a href="#" class="svc-link">Learn More</a>
+      </div>
+      <div class="svc-card">
+        <div class="svc-num">04</div>
+        <div class="svc-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+        <h3>Penetration Testing</h3>
+        <p>Ethical hacking and industrial system security testing to identify exploitable weaknesses before adversaries can — tailored to OT and ICS environments.</p>
+        <a href="#" class="svc-link">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATOR -->
+<section id="differentiator">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="eyebrow">Our Approach</p>
+      <h2>Engineering-Led <span class="accent">Cybersecurity</span></h2>
+    </div>
+    <div class="diff-layout">
+      <div class="reveal reveal-d1">
+        <div class="diff-text">
+          <p>Most cybersecurity firms focus purely on IT networks and enterprise systems. Onyx operates differently — we combine deep safety engineering expertise with specialist cybersecurity capability.</p>
+          <p>This allows us to secure environments where safety, availability, and cyber risk intersect — environments where a misconfiguration can have real physical consequences.</p>
+        </div>
+        <ul class="check-list">
+          <li>Industrial control systems &amp; SCADA networks</li>
+          <li>Safety Instrumented Systems (SIS)</li>
+          <li>Critical infrastructure networks</li>
+          <li>Process automation environments</li>
+          <li>Remote operational access &amp; connectivity</li>
+        </ul>
+      </div>
+      <div class="diff-right reveal reveal-d2">
+        <div class="capability-card">
+          <div class="cap-label">Safety Engineering <span>Expert</span></div>
+          <div class="cap-track"><div class="cap-fill" style="width:95%;animation-delay:0.5s"></div></div>
+        </div>
+        <div class="capability-card">
+          <div class="cap-label">OT Cybersecurity <span>Expert</span></div>
+          <div class="cap-track"><div class="cap-fill amber" style="width:92%;animation-delay:0.6s"></div></div>
+        </div>
+        <div class="capability-card">
+          <div class="cap-label">Regulatory Compliance <span>Advanced</span></div>
+          <div class="cap-track"><div class="cap-fill" style="width:88%;animation-delay:0.7s"></div></div>
+        </div>
+        <div class="capability-card">
+          <div class="cap-label">Risk Assessment <span>Expert</span></div>
+          <div class="cap-track"><div class="cap-fill amber" style="width:94%;animation-delay:0.8s"></div></div>
+        </div>
+        <div class="capability-card">
+          <div class="cap-label">Penetration Testing <span>Advanced</span></div>
+          <div class="cap-track"><div class="cap-fill" style="width:80%;animation-delay:0.9s"></div></div>
+        </div>
+        <div class="standards-panel">
+          <p class="standards-panel-label">Standards We Work To</p>
+          <div class="stds">
+            <span class="std">IEC 61508</span>
+            <span class="std">IEC 61511</span>
+            <span class="std">IEC 62443</span>
+            <span class="std">ISO 27001</span>
+            <span class="std">NIST CSF</span>
+            <span class="std">NIS2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section id="industries">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="eyebrow">Sectors We Serve</p>
+      <h2>Critical sectors <span class="accent">we support</span></h2>
+      <p class="lead">Deep domain knowledge across the industries where operational risk and cyber threat intersect most critically.</p>
+    </div>
+    <div class="industries-grid reveal">
+      <a href="#" class="ind-card"><span class="ind-arrow">&#x2197;</span><div class="ind-num">01</div><h3>Energy &amp; Utilities</h3><p>Power generation, transmission, and distribution networks — supporting safe and secure operations from generation to grid.</p></a>
+      <a href="#" class="ind-card"><span class="ind-arrow">&#x2197;</span><div class="ind-num">02</div><h3>Manufacturing</h3><p>Process and discrete manufacturing environments — protecting production systems, safety controls, and automated processes.</p></a>
+      <a href="#" class="ind-card"><span class="ind-arrow">&#x2197;</span><div class="ind-num">03</div><h3>Oil &amp; Gas</h3><p>Upstream, midstream and downstream facilities — managing complex safety and cybersecurity challenges in high-hazard environments.</p></a>
+      <a href="#" class="ind-card"><span class="ind-arrow">&#x2197;</span><div class="ind-num">04</div><h3>Transport Infrastructure</h3><p>Rail, road, and aviation control systems — ensuring safety-critical transport infrastructure remains resilient against cyber threats.</p></a>
+      <a href="#" class="ind-card"><span class="ind-arrow">&#x2197;</span><div class="ind-num">05</div><h3>Defence &amp; Aerospace</h3><p>Mission-critical defence systems — independent functional safety and security assessments for the most demanding environments.</p></a>
+      <a href="#" class="ind-card"><span class="ind-arrow">&#x2197;</span><div class="ind-num">06</div><h3>Critical National Infrastructure</h3><p>Cross-sector CNI protection — supporting government and private operators with safety, security, and compliance programmes.</p></a>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHTS -->
+<section id="insights">
+  <div class="section-inner">
+    <div class="insights-header reveal">
       <div>
-        <div class="about-body">
-          <p>Onyx Safety Engineering is a specialist consultancy providing safety and risk engineering services to organisations operating in complex and safety-critical environments. Founded by experienced safety engineers, the company was established to deliver independent, technically rigorous advice that helps organisations manage risk effectively while meeting demanding regulatory and operational requirements
-          <p>We support clients across the full system lifecycle—from early concept and design through verification, validation, and operational assurance. Our work focuses on identifying hazards, assessing risk, and developing robust safety management and assurance frameworks aligned with recognised international standards such as IEC 61508, IEC 61511, and IEC 62443.
-          <p>Onyx has supported projects across sectors including energy, industrial automation, defence, and critical infrastructure. By combining deep technical expertise with practical engineering insight, we help organisations strengthen system safety, resilience, and regulatory compliance.
-        </div>
-        <div class="about-values">
-          <div class="value-card">
-            <div class="value-icon">⚙️</div>
-            <div class="value-title">Engineering Rigour</div>
-            <div class="value-desc">Our work is grounded in disciplined engineering practice and recognised international standards. We apply structured methodologies such as IEC 61508/61511 functional safety frameworks, IEC 62443 cybersecurity principles, and formal risk assessment techniques to ensure every recommendation is technically defendible, auditable, and practical to implement</div>
-          </div>
-          <div class="value-card">
-            <div class="value-icon">🛡️</div>
-            <div class="value-title">Duty of Care</div>
-            <div class="value-desc">We place the safety and wellbeing of people, assets, and the environment at the centre of everything we do. Our duty of care extends beyond regulatory compliance — we work proactively with clients to identify hazards, reduce risk, and support a culture where safety and security are integral to everyday operations</div>
-          </div>
-          <div class="value-card">
-            <div class="value-icon">📋</div>
-            <div class="value-title">Compliance First</div>
-            <div class="value-desc">Regulatory compliance is the foundation of effective safety and cybersecurity management. Our approach ensures organisations meet their obligations under relevant legislation and standards, including industry-specific safety regulations, cybersecurity frameworks, and operational assurance requirements. We translate complex regulatory expectations into practical, implementable actions for your teams.</div>
-          </div>
-          <div class="value-card">
-            <div class="value-icon">🤝</div>
-            <div class="value-title">Partnership</div>
-            <div class="value-desc">We work as an extension of your organisation rather than as an external advisor. Our consultants collaborate closely with engineering, operations, and management teams to deliver solutions that are technically robust and operationally sustainable. Many of our client relationships continue long after initial projects, supporting continuous improvement and long-term resilience</div>
-          </div>
-        </div>
+        <p class="eyebrow">Thought Leadership</p>
+        <h2>Recent <span class="accent">Insights</span></h2>
       </div>
-      <div>
-        <div class="team-placeholder">
-          <div class="placeholder-img">Team Photo / About Image</div>
-          <div style="text-align:left;">
-            <div class="section-eyebrow" style="font-family:'Barlow Condensed';font-size:0.72rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;">
-              Our Team
-            </div>
-            <p style="font-size:.9rem;color:var(--muted);line-height:1.7;">Our consulting team brings together specialists in safety engineering, cybersecurity, risk management, and regulatory compliance.
-Lead consultants hold internationally recognised professional qualifications including Chartered Membership of professional bodies, postgraduate engineering degrees, and advanced certifications in safety and cybersecurity disciplines.
-Areas of specialist expertise include:
-,<ol class="">Functional Safety Engineering and Safety Instrumented Systems</ol>
-<li>Industrial Cyber Security & Operational technology</li>
-<li>Process Safety and Hazard Analysis (HAZOP, LOPA, SIL Determination)</li>
-<li>Regulatory Compliance for High-Hazard Industries</li>
-<li>Safety Case Development and Assurance</li>
-<li>Cyber Threat Intelligence and Security Architecture</li>
-	
-Each consultant brings extensive industry experience across sectors such as energy, critical infrastructure, defence, manufacturing, and transportation.
-________________________________________
-</p>
-            <a href="#" class="btn-outline" style="margin-top:1.5rem;display:inline-block;font-size:.8rem;padding:.6rem 1.4rem;">Meet The Team</a>
-          </div>
-        </div>
-      </div>
+      <a href="#" class="btn-outline" style="align-self:flex-end;">View All Articles</a>
+    </div>
+    <div class="insights-grid reveal">
+      <a href="#" class="insight-card">
+        <span class="ins-tag">Guide</span>
+        <h3>Industrial Cybersecurity Risk Assessment Guide</h3>
+        <p>A structured methodology for evaluating threats against industrial systems and operational processes — from asset identification to remediation planning.</p>
+        <span class="ins-read">Read More</span>
+      </a>
+      <a href="#" class="insight-card">
+        <span class="ins-tag">Compliance</span>
+        <h3>Implementing IEC 62443 for OT Networks</h3>
+        <p>Practical guidance for organisations implementing the IEC 62443 framework, including zone and conduit design and security level assessments.</p>
+        <span class="ins-read">Read More</span>
+      </a>
+      <a href="#" class="insight-card">
+        <span class="ins-tag">Safety</span>
+        <h3>Protecting Safety Instrumented Systems from Cyber Threats</h3>
+        <p>How the convergence of safety and security creates new risks for SIS environments — and what engineers and operators need to know.</p>
+        <span class="ins-read">Read More</span>
+      </a>
+      <a href="#" class="insight-card">
+        <span class="ins-tag">Incident Analysis</span>
+        <h3>Lessons from Industrial Ransomware Incidents</h3>
+        <p>An analysis of major industrial ransomware events — common attack vectors, operational impact, and defensive measures for OT environments.</p>
+        <span class="ins-read">Read More</span>
+      </a>
     </div>
   </div>
 </section>
 
-<!-- ── TRAINING ── -->
-<section id="training">
+<!-- PORTAL -->
+<section id="portal">
   <div class="section-inner">
-    <div class="section-header">
-      <p class="section-eyebrow">Accredited Programmes</p>
-      <h2 class="section-title">Professional<br>Training Courses</h2>
-      <p class="section-subtitle">Process Safety, Cyber Security, and bespoke in-house programmes delivered online and on-site across the UK.</p>
+    <div class="reveal">
+      <p class="eyebrow">Client Access</p>
+      <h2>Client <span class="accent">Portal</span></h2>
+      <p class="lead">Secure, direct access to your project records, compliance reports, and consultant support — all in one place.</p>
     </div>
-    <div class="courses-grid">
-
-      <div class="course-card">
-        <div class="course-thumb">
-          <span class="course-level">Foundation</span>
-          Course Thumbnail
-        </div>
-        <div class="course-body">
-          <div class="course-title">Introduction to Process Safety</div>
-          <p class="course-desc">[Placeholder — brief course description covering objectives, who it's for, and key learning outcomes.]</p>
-          <div class="course-meta">
-            <span>⏱ 3 Days</span>
-            <span>📍 Online / On-site</span>
-            <span>✓ Accredited</span>
-          </div>
-        </div>
+    <div class="portal-grid reveal">
+      <div class="portal-card">
+        <div class="portal-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <h3>Training Records</h3>
+        <p>Access workforce training records, certification documentation, and safety training logs to support audit readiness and regulatory compliance.</p>
       </div>
-
-      <div class="course-card">
-        <div class="course-thumb">
-          <span class="course-level">Intermediate</span>
-          Course Thumbnail
-        </div>
-        <div class="course-body">
-          <div class="course-title">Introduction to Environmental Risk Assessment (CDOIF)</div>
-          <p class="course-desc">[Placeholder — brief course description covering objectives, who it's for, and key learning outcomes.]</p>
-          <div class="course-meta">
-            <span>⏱ 10 Days</span>
-            <span>📍 Online / On-site</span>
-          </div>
-        </div>
+      <div class="portal-card">
+        <div class="portal-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Compliance Reports</h3>
+        <p>Secure access to safety assessments, cybersecurity audits, compliance reports, and action tracking dashboards to monitor risk mitigation progress.</p>
       </div>
-
-      <div class="course-card">
-        <div class="course-thumb">
-          <span class="course-level">Advanced</span>
-          Course Thumbnail
-        </div>
-        <div class="course-body">
-          <div class="course-title">Hazard Estimation</div>
-          <p class="course-desc">[Placeholder — brief course description covering objectives, who it's for, and key learning outcomes.]</p>
-          <div class="course-meta">
-            <span>⏱ 20+ Days</span>
-            <span>📍 On-site</span>
-          </div>
-        </div>
+      <div class="portal-card">
+        <div class="portal-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3>Security Dashboard</h3>
+        <p>Real-time insights into vulnerability status, security alerts, patch management data, incident logs, and OT network monitoring insights.</p>
       </div>
-
-      <div class="course-card">
-        <div class="course-thumb">
-          <span class="course-level">Specialist</span>
-          Course Thumbnail
-        </div>
-        <div class="course-body">
-          <div class="course-title">Introductin to Fire Engineering</div>
-          <p class="course-desc">[Placeholder — brief course description covering objectives, who it's for, and key learning outcomes.]</p>
-          <div class="course-meta">
-            <span>⏱ 2 Days</span>
-            <span>📍 On-site</span>
-          </div>
-        </div>
+      <div class="portal-card">
+        <div class="portal-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>Consultant Support</h3>
+        <p>Direct communication with your assigned consultants — submit queries, request document reviews, schedule meetings, and track project updates.</p>
       </div>
-
-      <div class="course-card">
-        <div class="course-thumb">
-          <span class="course-level">Bespoke</span>
-          Course Thumbnail
-        </div>
-        <div class="course-body">
-          <div class="course-title">Human Factors Risk Assessment</div>
-          <p class="course-desc">[Placeholder — brief course description covering objectives, who it's for, and key learning outcomes.]</p>
-          <div class="course-meta">
-            <span>⏱ 1 Day</span>
-            <span>📍 Online / On-site</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="course-card">
-        <div class="course-thumb">
-          <span class="course-level">Cyber</span>
-          Course Thumbnail
-        </div>
-        <div class="course-body">
-          <div class="course-title">Cyber Security Awareness</div>
-          <p class="course-desc">[Placeholder — brief course description covering objectives, who it's for, and key learning outcomes.]</p>
-          <div class="course-meta">
-            <span>⏱ 1 Day</span>
-            <span>📍 Online</span>
-            <span>✓ NCSC/ IEC 62443 Aligned</span>
-          </div>
-        </div>
-      </div>
-
     </div>
-    <div style="text-align:center;margin-top:2.5rem;">
-      <a href="#" class="btn-outline">View All Courses</a>
+    <div style="text-align:center;margin-top:44px;" class="reveal">
+      <a href="#" class="btn-primary">Access Client Portal</a>
     </div>
   </div>
 </section>
 
-<!-- ── CYBER SECURITY ── -->
-<section id="cyber">
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-geo"></div>
+  <div class="cta-lines"></div>
   <div class="section-inner">
-    <div class="section-header">
-      <p class="section-eyebrow">Digital Protection</p>
-      <h2 class="section-title">Cyber Security<br>Services</h2>
-      <p class="section-subtitle">Comprehensive cyber risk management, compliance, and incident response tailored to operational and industrial environments.</p>
+    <div class="reveal">
+      <p class="eyebrow">Get Started</p>
+      <h2>Protect Your<br><span class="accent">Industrial Systems</span></h2>
+      <p class="lead">Speak with a specialist consultant about safety engineering, industrial cybersecurity, and compliance. We respond within one business day.</p>
+      <a href="mailto:enquiries@onyxsafety.com" class="btn-amber">Book a Consultation</a>
     </div>
-    <div class="cyber-layout">
-      <ul class="services-list">
-        <li class="service-item active">
-          <div class="service-icon">🔍</div>
-          <div>
-            <div class="service-name">Vulnerability Assessment</div>
-            <div class="service-brief">We conduct structured vulnerability assessments to identify weaknesses across IT infrastructure, cloud environments, and operational technology systems. Using a combination of automated scanning tools and expert analysis, we prioritise vulnerabilities based on exploitability, operational impact, and threat intelligence, providing clear remediation guidance.</div>
-          </div>
-        </li>
-        <li class="service-item">
-          <div class="service-icon">🧱</div>
-          <div>
-            <div class="service-name">Penetration Testing</div>
-            <div class="service-brief">Our penetration testing services simulate real-world cyber attacks to evaluate the resilience of systems and networks. Certified ethical hackers apply recognised testing methodologies to identify exploitable weaknesses and demonstrate potential attack paths. Clients receive detailed reports outlining vulnerabilities, evidence of exploitation, and practical remediation steps</div>
-          </div>
-        </li>
-        <li class="service-item">
-          <div class="service-icon">📜</div>
-          <div>
-            <div class="service-name">Cyber Essentials / ISO 27001</div>
-            <div class="service-brief">We support organisations in achieving recognised cybersecurity certifications through structured gap analysis, policy development, and compliance consultancy. Our services help organisations align with industry standards, establish effective security management systems, and prepare for independent certification audits</div>
-          </div>
-        </li>
-        <li class="service-item">
-          <div class="service-icon">🚨</div>
-          <div>
-            <div class="service-name">Incident Response Planning</div>
-            <div class="service-brief">Preparation is critical to managing cyber incidents effectively. We help organisations develop comprehensive Incident Response Plans, define escalation procedures, and conduct tabletop exercises that test organisational readiness. Our approach ensures teams understand their roles and can respond quickly to minimise operational disruption.</div>
-          </div>
-        </li>
-        <li class="service-item">
-          <div class="service-icon">🎓</div>
-          <div>
-            <div class="service-name">Security Awareness Training</div>
-            <div class="service-brief">[Human behaviour remains a key factor in cyber risk. Our training programmes help staff recognise phishing attempts, social engineering attacks, and unsafe digital practices. Through e-learning modules, awareness workshops, and simulated phishing campaigns, organisations can strengthen their security culture and reduce human-driven vulnerabilities.</div>
-          </div>
-        </li>
-        <li class="service-item">
-          <div class="service-icon">🏭</div>
-          <div>
-            <div class="service-name">OT / ICS Security</div>
-            <div class="service-brief">Industrial control systems require specialised cybersecurity approaches that respect operational safety and availability requirements. We assess industrial networks, control systems, and remote access infrastructure to identify cyber risks while ensuring operational continuity. Our services support compliance with industrial cybersecurity standards and best practices for critical infrastructure protection.</div>
-          </div>
-        </li>
-      </ul>
-
-      <div class="cyber-feature">
-        <div class="feature-badge">🛡 Active Protection</div>
-        <div class="feature-title">Protecting Critical Infrastructure &amp; Business Operations</div>
-        <p class="feature-text">[Placeholder — describe your overarching cyber security philosophy, the types of organisations you help, and why combining physical safety expertise with cyber security gives you a unique edge.]</p>
-        <p class="feature-text">[Placeholder — add statistics, case study references, or client outcome summaries to build credibility.]</p>
-
-        <div class="threat-meter">
-          <div class="meter-label"><span>Threat Detection Coverage</span><span style="color:var(--gold)">94%</span></div>
-          <div class="meter-bar"><div class="meter-fill" style="width:94%"></div></div>
-
-          <div class="meter-label"><span>Compliance Success Rate</span><span style="color:var(--gold)">98%</span></div>
-          <div class="meter-bar"><div class="meter-fill" style="width:98%"></div></div>
-
-          <div class="meter-label"><span>Incident Response SLA</span><span style="color:var(--gold)">2hr</span></div>
-          <div class="meter-bar"><div class="meter-fill" style="width:80%"></div></div>
-        </div>
-
-        <a href="#" class="btn-primary" style="margin-top:2rem;display:inline-block;">Request a Cyber Audit</a>
-      </div>
+    <div class="cta-trust reveal">
+      <span class="cta-trust-item">Independent &amp; Impartial Advice</span>
+      <span class="cta-trust-item">Engineering-Led Expertise</span>
+      <span class="cta-trust-item">UK, Europe &amp; Middle East</span>
+      <span class="cta-trust-item">Response within 24 Hours</span>
     </div>
   </div>
 </section>
 
-<!-- ── LOGIN ── -->
-<section id="login">
-  <div class="section-inner">
-    <div class="section-header">
-      <p class="section-eyebrow">Client Portal</p>
-      <h2 class="section-title">Secure<br>Client Access</h2>
-      <p class="section-subtitle">Access your training records, compliance documents, and reports through the Onyx client portal.</p>
-    </div>
-    <div class="login-layout">
-      <div class="login-panel">
-        <div class="login-title">Sign In</div>
-        <p class="login-sub">Enter your credentials to access the Onyx portal.</p>
-        <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" class="form-input" placeholder="yourname@company.com">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" placeholder="••••••••••">
-        </div>
-        <div class="form-row">
-          <label class="form-check">
-            <input type="checkbox"> Remember me
-          </label>
-          <a href="#" class="form-link">Forgot password?</a>
-        </div>
-        <button class="btn-submit">Sign In to Portal</button>
-        <div class="login-divider">or</div>
-        <button class="btn-submit" style="background:var(--onyx-surface);color:var(--white);border:1px solid var(--onyx-border);">Sign In with SSO</button>
-        <p class="login-register">Don't have an account? <a href="#">Contact us to register</a></p>
-      </div>
-
-      <div class="login-info">
-        <div class="info-item">
-          <div class="info-num">01</div>
-          <div>
-            <div class="info-text-title">Training Records &amp; Certificates</div>
-            <div class="info-text-desc">[Placeholder — describe what training documentation clients can access and download through the portal.]</div>
-          </div>
-        </div>
-        <div class="info-item">
-          <div class="info-num">02</div>
-          <div>
-            <div class="info-text-title">Compliance Reports &amp; Audits</div>
-            <div class="info-text-desc">[Placeholder — describe access to safety audit reports, action plans, and compliance dashboards.]</div>
-          </div>
-        </div>
-        <div class="info-item">
-          <div class="info-num">03</div>
-          <div>
-            <div class="info-text-title">Cyber Security Dashboard</div>
-            <div class="info-text-desc">[Placeholder — describe real-time monitoring views, vulnerability reports, and incident logs available to clients.]</div>
-          </div>
-        </div>
-        <div class="info-item">
-          <div class="info-num">04</div>
-          <div>
-            <div class="info-text-title">Support &amp; Consultant Access</div>
-            <div class="info-text-desc">[Placeholder — describe how clients can contact their assigned consultant, raise queries, or schedule review meetings.]</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── FOOTER ── -->
+<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <div>
+    <div class="footer-grid">
       <div class="footer-brand">
-        <img src="c:\Users\SteveDrever-Marshall\OneDrive - Onyx Safety Engineering Limited\Documents\Onyx Safety Engineering\Web Pages\Lesson 1\alogoonyx.png" alt="Onyx Safety Engineering">
-        <div class="nav-brand" style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;letter-spacing:.08em;text-transform:uppercase;color:var(--white);margin-bottom:.5rem;">
-          Onyx Safety Engineering
-        </div>
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAB9AYoDASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAcEBQYICQMBAv/EAEkQAAEDBAECBAMFAgoEDwAAAAEAAgMEBQYRBxIhCBMxQRQiURUyYXGBCUIYIzNScoKRobHBFheysyQmNTY3Q1NXYnN0dXaV0v/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDctERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERARFR0d0ttZXVdBSV9NPVUTmtqoY5A58JcNgOA7jY790FYtWPGDfuZ+Pa45tYM3pqXF5qqCkprcynaZGPMbnO6uph6gSxx31e4GltOtbf2if/QZQf+/Qf7mZBsXb5XT0FPO/XXJE17temyAV7qls3/JFH/6dn+yFVINTeHMh5t5F5lySajzmlpccx3ITBWUE1O0+ZT+bIPLZpm/uxkbLh3IK2yWsfgk/57cxf/Ih/vKlbOICKhu94tVnbTuutxpaFtTO2ngM8oYJJXfdY3fqT9FXICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIggLxj80V/GGM01px+nlF9vDHCGsdHuKljHZzgT2Mn0Ht6n2B0QwfkbMsMyyTKLFfKmK5TOLql8jjIKnZ2RID97Z+vf6ELptzfgNt5J44umNV0LHTyQukoZiPmgqGgmN4Pt37H6gkLlBNG+GV8UjS17HFrgfYj1CDbOz+N3IYaFsd1wi3VdUG95Yax8TXH+iWu1/aov5m5xzzmptNYJLZDBbmVDZobfQxOke6UAtaXO9SQHEDQA7qo8NXh+vnK9X9q1sklqxeCTplrC356hw9Y4gfU/V3oPxPZb+cb8a4Vx7bWUWLWKmoyG6fUlofPL9S6Q9z+Xp+CDJbUx0dspY3tLXthYHA+xDQqlF+ZZY4m9UsjI271tztBBzfouVc74T5jzT7No4209wvNQ+qo66AhswE0hY5p7EHTjojt39CpEqvG/fHUJZT4HQRVRGvMfXucwH69PQN/ltbd51g2JZ1anW/KLHR3KFzdNfIweZH+LHj5m/oVof4nPDddONWy5Ljb57pixd/GFw3NRbPYSa9W+3WP1122EYcrcpZnyZeWXLKLo6UQkmmpYR0QU/8AQb9fxOz+K268D3N13zCF+AZOKmtuFBT+bR3HpLuuFuh0Su/nDtpx+8Ox7jvoeumng+4/oMH4YtFS2nYLre6dlwrpiPmd5g6o2b+jWEDX1Lj7oJkREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQERR1k/OHFONz1lNdc1tbKqilfFUU0cnmTMe0kOaWN2dggjSDNsiu1FYbBX3u4ytho6CmkqJ3k6AYxpcf8ABcvOFsErOXeX6eyR9cFLUzvrLhKwfyFOHdTyPxOw0fi4KS/FN4lJuRqJ+JYlDPQY2Xg1M0vyzVpB2AR+6zYB16ntvWtGVf2b+LRUuGZDmEsY+Irq1tDC4juIomhztfgXSd/6AQbR49Z7bj9jo7JZ6SOjt9FC2GnhjGmsaP8AP3J9z3WGc4cuYvxLj8Fyv5mnqKt7mUdFTgGWcgbcRvsGjY2T9R7lSEtQP2iGB5HeDYcxtNHUV1voKeSlrI4Wlxp9u6myED909wT7aH1QSLwj4n8P5JyePGZLfV2O6VG/hG1DmujqCBvpDh6O0D2Pr7KG/wBodLnLM3srYX3FmMGhHw/w5cIjU9bvM6un1fro1v29PdRJ4V+P8nynmTHqugoKuGhtVwhra2sdGWsiZG8P1s/vO10gfit+7/yxxxbuQabj27Xymbfah0bW00kRcxr36LGudrpa47GgTvuPqgxrwcSZfJwTan5kat1UZpfgzVb840ux5Zdvv69Wt/u9Kl2vpKavop6KtgjqKaojdHNFI0Oa9jhotIPqCF7Ig5f+Kbi13FnJ1RbqNjzZLg01dre7vqMnToyfcsPb8uk+66CeHvIaPJ+FcSutHI1zfsyGnlAP3JYmiN7f0c0qLP2guLRXjhaLIWxg1Viro5A/XcRSkRvb+XUYz/VWsXhj57ufEdfLbq2nkuWM1knmT0rXakgf6eZHvtsgAFp7HQ9Ndw6WIomx7xGcO3miZUszOio3OA3DWAwyNP004f4KWQQQCO4KAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAuSfMpeeXsyMm+v7erd7/wDPeutiivLPD3xHk1ZXV9xxOJtfXzPnnq4aiRkjpHklzvva2SSfTSDl2uj/AIC/K/g6Wzy9dXx1X5n9LzD/AJaWtHie8NldxlRuyjG6qa6Yz1hswkH8fRknTevXZzCdDqGu/YgbG8u8J98vd48NvI2E41cp6LIreHXG3vgOpXNe0bY38zEW79vMCDeJCARo9wuVsfOPLUWOf6PNzm7NoQ3o11jzQ36ebrr/AL161/PfL9bTUlPPnl16KR7XxGMsY4lvp1FrQXfk7YPug6lQwxQs6IYmRt3vpY0Af3KI8p8PeD5FzBT8lVr65tfHNFUS0zJAIZpYg0Mce2x91uwPXS1dwGv8VvJDYMsx68XWanpg5kE8kkNPBL/OAa4Bsnp66Olkvh9unM968SM+NZ7mN+tFTDRPqa2kkDG+exhAaxjS3oAPXvqaO4B7oN3EWr/jBmyri3EocrwnOrzQG5XAUtbRzzNna8ujc4SRdbSWEdGiG9u47DXfU1vOfLbcffYhnd2+CeC123gy6PqPM11j+1Bv74uvL/g45l5uun4Nmt/Xzo9f36XLxbccrZbk9D4IrDR5jeKivveWVjXw+frzG0bHCRuyANjTIzs9/wCMUW+Gnge8cu3GasmqHWzHKKQMqa3o26R/r5cY93a0SfQAj6gIIbj31t6fXY0ux1t6vs6m6/veSzf56ChaLw/cBYXZG1F9tNuZBFrqr7xcCzZ9e7i5rR6fRS3jeS41kcD5ccyC03iKPs99BWRztb+BLCdILsiIgIiICIrVkeS45jdOyoyK/wBqs0Mh0ySvrI6drj9AXkAoLqio7NdbXeqBlfZ7lR3Kjf8AcnpJ2yxu/JzSQVWICKmulfQWu3zXC51tNQ0cDeuaoqJWxxxt+rnOIAH5rzsl2tV8tcN0slzornQT9XlVVHO2aKTpcWnpe0kHTgQdH1BCCtREQEREBFhn+tjiz/vLwz/72m//AGslsV5tF+tsdzsV1obrQyEhlTRVDJonEHRAe0kHRBB7oK5ERARUN/vFpsFonu98uNLbbfTgGapqZRHHHtwaNuPYbJA/MhVrHNewPY4Oa4bBB2CEH1ERAREQERUFHerRWXmustJc6Se5W8RurKSOZrpacSDqYXtHdvUO436hBXoiICIiAiIgIiICIiAiIgt+TWeiyHHbjYrlE2WjuFNJTTMcN7a9pB/XuuYHB+e1fEXMFPeQXzUcEz6K5RM/66nLtP1+IIDh+LQuj/MmcW7jvjq7ZRcJWNdTQOFLGT3mnI1GwfXbtfkNn2XJqeV888k0ri6SRxc4n3JOyUE7+LDiqGwXdnIuGhldhOREVUE9P8zKaST5iw69Gk7Lf1b7KBVNHAHONRglFUYhldvGQ4PcNtqrfKA4wdXq6PfbXuW9u/cEH1zXI/DvjOe0b8l4JyuhudJJ87rNVzdE8BPfoBd3H5P1r6lBudw3WWOu4qxifHHQm1/ZkDYBFrTNMALTr94EEH8dqBfFtbMoyPmDD6filsr81tFDUVNVPTStY6np3OYIxI53YAnzNNPrs9u610t1h8RPGMc9vtdvy20U0hPW2mjdJA4+5boFu/xCvnA9y57xLN7hkFkw29X2rusYirvj6WVwl0dtcZD3BB99+hIQR5zVmfJOSZE+08kXGrlr7RI6H4SVjY2wP9z0tAGz27/T8Fe/DVxLU8lZYKu5g0mJWoiou9dIehnQ3v5Qce3U4D9BsqVLtwjX3TJbjyZ4hcrteMU9bN589HTzNM8vYBsbdbDflAaNdTu3osG5v5vobtjTOOOMLYcdwin+V7Wjpmr/AMX+4afUgnZ9/ogsXij5Lg5I5GMloHlY5Z4vgLRE0dLfKb6yAe3UR2/8IaPZdAvDxjtHi3CeJ2qjja3dshqZiB9+WVoke4/X5nH9NLlKunXhGzuizfhOyCOdjrjaKdlurot/Mx0TQ1jiPo5gad/mPZBjfHFjtXKvMuf5XmNJDeabGru6w2W31jBJT0nk/wArIIz8pe52j1EEj+zXn4lscsXGlmt3LuGWylsN4sdxpxVtt8LYGXCkkeI5IJWN0129t0SNjX5auQo8o4i5Qym+27FLpk+GZVUNuEzLPGJay3VmtSHySQZGP+9tvcaA19aTOJcm50lteI0uEZBjeHx18NZfK7IKT4WWpjicHCnhhJLj1O9XHQGv7QyrPM6zqj5io8Aw+x2e4Gtx99xE9dI+NtLI2oEfmSOaSXRBp10Nb1Fzm/MBsi12jPuTm3LM8JvFsxiXNLRZm3e0yUDZzRVrHbAY5j3h7XdbenfUN9W/Qd75NbLkfFPS3kW+rNsbhE1KazyXeQJjXROEfXrp6+kE9O96BKpbZabozxY3i9PttY21yYhBTsrTA4QOlFSXGMSa6S4Dv073pAufLjf4OEHKFqpoKivraCL4OkLXOY6vkcIhDoEOcBMS0gEHTT3Hqvl55Lu+BZbS0XJhtFJYq+z/ABFLc6OKSNrK2GPqqad/U92+obdH6EgdPzHuo5xvGbm3xAP4sdD14nZL1JmsTt/K1srAIafX0bUPleAf5m/yzDljELlzLm0+FXKmulowyxU5qJK4wuidXXGRjmwmEuHzxwhxcSDovIadhBIHEl6yjI8OhyDKbdSWyW4yOqKGihY4SU9I47hbMXOPVKW6LtBoG9aGiod5IpI8V8QF2zfP8Cr8uxWut1NTWutp6Ftey0Fg1K18J2Whztu6wPfQ3t2pa4ZvOT3TEzQ5paqqhyG0TuoK2V8Lmw1xZ2bUwuIAeyQad29Dsduyxi/ZfyDg/JN6kvWM37LMLr2QSWiSxUDJ57c8N1LFJG3Ujw53zB53rt9T0h5cFQcVXHLb3l3Ft/gbBcaaOO4WOlaIIYpWu7TmnLQ6N/3m70GnZ9+6pJs35pq8Ruud0OM43aLNQipnhs15hqornPTQF23OcS1sL3hhLWuYR3bs6O1bsQteSZdzrX8m2vD7hhtvhx6W2xG7U7aepuVS5/U2SSEbIY3Q7v7nTfyGCWzGxceMbhasj4dyvI+Sn0tSyruN5pTJCJy1+poqmRxZ0gdPS2LZJAAHugyDxJ3q/wCbcW8f3uzGzRY7kF0tMj6Kvp5JZTPK4uayQteGOhHYOb07JHYhZpfs2yjFq3HuOqIYTBldXST3Csq5GSUlqoqZsxa1zYusvc9xcB0h424OOwPTFr9jmQy+HLiG1R2G6PuFvu9kkraVtJIZaZkf8o6RmtsDfckDXur1zbhzI+YLJyPcMDZnNibZ32e529tDHWTUw80yxVEcDwesglzT0/MA7tvekF4w3kLK7rk954/r5MUlyiG0/alsuVtdJNbp4zJ5Z8yPr62Oa8t23rOw7YIWCcC1/LwwnPLhQ12NXJ9HersIKaopql8slZGQQxjvOAbCSNNb6jfqs14hoop+R6+8Y3xXbcJxaK2CmZU1Fhjt9xral0gc4BoAe2ANaNhwG3AEei8fD626Yrfstwq9Y5fKeepyOvulJcRQvdQT08rg5hE4+UP7H5D3QXG58uN/g4QcoWqmgqK+toIvg6Qtc5jq+RwiEOgQ5wExLSAQdNPceqk2z/aH2RR/axpzcfIZ8X8O0ti83pHX0AkkN6t6BJOvcrWvG8ZubfEA/ix0PXidkvUmaxO38rWysAhp9fRtQ+V4B/mb/LZ5Bpn4Xc54GsnDNrt2dTY02+xzVBnFbavOl6TK4s2/y3b+UjXdThnmf0uI8b4rfuMrNa7lbrzfKOipqWCDyGTxTvcHeUNsDJHEaDndgTsgqOPDLm9w464ftmKZBxfyc64Us1Q+Q02MTvj0+VzxonXsR7LPuT6yvzrFMAu1qxjJKby85tdRPSV1tkiqaeGKc9cskfcsYAN9R7aIKD7LnPKGLZ3jFDntrxH7EyauNvpzaJah1RRVBYXRtkdJ8sgOi3bWt+v4G5V2Y5xkXI2R4lgkOO0cONMpm19beY5pvPnnjMjY42RPZ0tDdbeSe57NK8ufrTdLnkXGEttttZWx0WX09RVup4HSCCIRyAyPLQelo2PmOh3Ub5PNWT8/ZzW22i5CeY4aOjfVYMKYskDItuZVGo7GcF5A6fmazp9N9wrX5pfneHDOs5yV1Bkd0pq2SlqbNc6JktrppYKoRmONg6XPj0Wu29xdsAk9lIPJ+cZhYeSMXw3D7Da7nJeqGsl/4XI6FsDofL6XueD2jAedgNc49gNeqjzKJLBkPhZzXCuPMdyOG5WsMhqrNXUUhuQnkmZKXSN+Z0jnguf1AnY/BSRldsuU3iLwi6w2+rkt9NZrnHPVMhcYonvMPQ1zwNNJ0dAnvooKbAs3ziLlWo465Dose+OltH2tb62yec2GSIS+W+N7ZSXB4J3vetKx03KOZ5XVXa4YbWYBbLLQVs1HSsv1VL8TcHRO6XSDoc0QsLgQ0kPJ1sgehvVztN0f4sbPemW2sda48Qnp31ogcYGympDhGZNdIcR36d70o2xLE8f49F5xrNODpcsmZcaiotN3osbiuQrqeR5fGySQtJie3q6T16aNdjoIJBm5upDwjbM/p7Rq43SsZaqa2TVIa0V7pXRFjpda6A5j3dfu0exKpKfk3LsdyXHaPMqzBrxbr9cIrYyXHZ5RNRVMu/L62SPd5kZcOnrHTrYOu+lY8t46yjIfD3YKeowzHKW+We9RX5uMUUEcNHKxkkhNK5oBYXOikPV26S4kei/VvpbNeMoxqHA+A6THqqC5RVN2ud6xKGjbQwRnqd5L9AvnLgOh0fUARv07oMlr855KuXL+UYJiNlx19NZ47fN9o3F8rWQsmjc6Rr2scXSPcR8gaGgBruo+ivmE3kVvN3Ilm+x7RTG2U9qd8dT03RVVXnRSkieTfzhvQA3sNAn1VLgFsuVNz9yhc6m31cNDW01lbSVMkLmxTmOGcPDHkad0kgHROtjaYBbLlTc/coXOpt9XDQ1tNZW0lTJC5sU5jhnDwx5GndJIB0TrY2gwbD+Sucsw4lp8+s+OYVR08dJLUSxVr6gyV/ll/UYGsdqIab0jrc4kgnQGll125aqqnjzB7zjNpp5bxms8FNQQVkpEFK98ZfI6VzRtzWdLhpui7trSpuCLPd7b4VLZZrja66jubLPVxvo56d8c7XudLppYQHAnY0Ne4UZZFR11u8PfDuN3KzXltzFwgkfQ0EXl3qF0LJHl1Mx+ul7T09Rd6MJ9PUBI1BduRnc6WfEMwyK3U1N9mSXSlbYKQxRV5ZI1j46gTOke0AOBAY4A99n0CmhQLxpesas/JVKcktXJcGU3mI26gumX00Ra9g/jDTwvpz5TN66iNAkjuSp6QEREBERAREQEREGvfjT4fvnJGK0t4xurqZrjZmvcLX1/xdSw9yWN/wC1Ht9R29db0NwvCMpzHJhjePWaqrLnsh8Ib0+Vo6JeT2YB7krrsrZbMfslrutxututVJS11ye19bPFEGvnc0aBcR6oNJbN4J8yqKBs10yqzUVQ5u/JYx8nSfoXaA/s2sA5M4J5U4d/4xQTSTUMJ73S0TvBh/pgac0enc9l0sXnVQQVVNLTVMMc0EzCySORoc17SNEEHsQR7IOY9j8SPMtohbDFmVRUxNGmtqoY5SP1Ld/3r1vHiX5nuULoXZfJSscNH4anjYT+vTsforb4oMBp+OOZLtYbe0ttkvTWUDT+7DJ36f6rg5v9VYxxRicuc8kWHE4pDH9pVjIpJB6sj9ZHD8QwOP6IMy464u5V5wuL7nFJV1lMxxZLdbpUOMTT7ta52y4j6NB0pWqvBJlrKEvpswsstUBvy3RSNaT9A7X+S3XxqyWvG7DRWKy0cdHb6KJsMEMY0GtH+JPqT7kkq4oOS3J3G+YccXttqyq0yUkkmzBK354px9WPHY/l6hbdeBXhrIMVjl5AyKertz7jT+XSWzqLeuI9xLM3/ZB7jZPutnMgx+x5AylZe7VSXFtJUNqacVEQeI5W+jhv3VzQEREBedVEZ6WWATSQmRhYJIyA9mxrqbsEbHqOy9EQYfxxx7aMImutbTXC7Xe63eVklfc7rUNmqZ+gaY0ua1oDWgnTQABtZgiICIiAiIgIiIC86qIz0ssAmkhMjCwSRkB7NjXU3YI2PUdl6Igw/jjj20YRNda2muF2u91u8rJK+53WobNUz9A0xpc1rQGtBOmgADazBEQEREBR3duJrbNkFyvdhyrLMVqbrMKivjs9bGyGol6Q3zCyWORocQBst1vXdSIiDGcBwizYZDXm3SV1ZW3KcVFwr6+oM9TVSAdIL3n2AGg0AAD0AWTIiAiIgIiICIiAsU5BwKzZo+2VVbUXG3XO0yvlt1yt1R5NTSue3pf0u0QQ5ugQ4EHXosrRBH9i4rtlFkVBf71k2UZVXW1zn0BvNaySOle5vSXsjjYxnVokdTgSN9lICIgIiICIiAiIgIiICIiAiIggXxC+HCi5czGnyWbKp7TNBQsoxCyjErSGve7q31A7+f8AuVo4Z8Klv455CtmYtzKpuM9vMhbTmhbG1/XG5nc9ZPo7f6LZFEBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB//2Q==" alt="Onyx Safety Engineering" />
+        <p>Independent safety engineering and OT cybersecurity consultancy for critical infrastructure, industrial systems, and regulated environments.</p>
       </div>
-      <p class="footer-tagline">Delivering trusted engineering, safety, and cybersecurity expertise to protect people, infrastructure, and critical operations.</p>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Functional Safety Engineering</a></li>
+          <li><a href="#">OT Cybersecurity</a></li>
+          <li><a href="#">Cyber Risk &amp; Compliance</a></li>
+          <li><a href="#">Penetration Testing</a></li>
+          <li><a href="#">IEC 62443 Consulting</a></li>
+          <li><a href="#">ICS Security Assessment</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Industries</h4>
+        <ul>
+          <li><a href="#">Energy &amp; Utilities</a></li>
+          <li><a href="#">Manufacturing</a></li>
+          <li><a href="#">Oil &amp; Gas</a></li>
+          <li><a href="#">Transport Infrastructure</a></li>
+          <li><a href="#">Defence &amp; Aerospace</a></li>
+          <li><a href="#">Critical National Infrastructure</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Onyx</a></li>
+          <li><a href="#">Insights</a></li>
+          <li><a href="#">Client Portal</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
     </div>
-    <div>
-      <div class="footer-col-title">Services</div>
-      <ul class="footer-links">
-        <li><a href="#about">About Us</a></li>
-        <li><a href="#training">Training</a></li>
-        <li><a href="#cyber">Cyber Security</a></li>
-        <li><a href="#">Consultancy</a></li>
-        <li><a href="#">Risk Assessment</a></li>
-      </ul>
+    <div class="footer-bottom">
+      <p>&#169; 2025 Onyx Safety Engineering Ltd. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Cookie Policy</a>
+      </div>
     </div>
-    <div>
-      <div class="footer-col-title">Company</div>
-      <ul class="footer-links">
-        <li><a href="#">Case Studies</a></li>
-        <li><a href="#">News &amp; Insights</a></li>
-        <li><a href="#">Accreditations</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="footer-col-title">Contact</div>
-      <ul class="footer-links">
-        <li><a href="#">steve@onyxsafetyengineering.com</a></li>
-        <li><a href="#">+447876213028</a></li>
-        <li><a href="#">contact</a></li>
-        <li style="margin-top:.75rem;"><a href="#">LinkedIn</a></li>
-        <li><a href="#">Twitter / X</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 Onyx Safety Engineering. All rights reserved.</span>
-    <span>
-      <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
-      <a href="#">Terms of Use</a> &nbsp;·&nbsp;
-      <a href="#">Cookie Policy</a>
-    </span>
   </div>
 </footer>
 
 <script>
-  // Active nav on scroll
-  const sections = document.querySelectorAll('section[id], #home');
-  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(s => {
-      if (window.scrollY >= s.offsetTop - 90) current = s.id;
-    });
-    navLinks.forEach(a => {
-      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold)' : '';
-      a.style.borderBottomColor = a.getAttribute('href') === '#' + current ? 'var(--gold)' : '';
-    });
-  });
-
-  // Cyber service cards toggle
-  document.querySelectorAll('.service-item').forEach(item => {
-    item.addEventListener('click', () => {
-      document.querySelectorAll('.service-item').forEach(i => i.classList.remove('active'));
-      item.classList.add('active');
-    });
-  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  const nav = document.getElementById('mainnav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); });
 </script>
 </body>
 </html>
